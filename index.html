@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Autorization</title>
+    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+   
+</head>
+<body>
+    <form class="login-form">
+        <div class="login__logo">
+            <img src="img/logo.svg" alt="logo">
+        </div>
+        <h1 class="login__title">Welcome</h1>
+        <input class="login-input" type="text" placeholder="Login" maxlength ="20">
+        <input class="psw-login" type="password" placeholder="Password">
+        <button  class="login__btn">LOGIN</button>
+        <p class="wrong-input deactivate">Invalid login or password</p>
+        <p class="wrong-input-data deactivate">Please enter you login and password</p>
+        <div class="login__new-account">
+        Don't have an account?
+        <a href="#" class="sign-up">Sign Up</a></div>
+    </form>
+
+    <form class="registration-form deactivate">
+        <div class="registration__logo">
+            <img src="img/logo.svg" alt="logo">
+        </div>
+        <h1 class="registration__title">Registration</h1>
+        <input class="registration-name" type="text" placeholder="Firstname Lastname" required>
+        <input class="registration-login"type="text" placeholder="Login" required maxlength ="15">
+        <input class="registration-psw" type="password" placeholder="Password" maxlength ="20" required>
+        <button class="registration__btn">Create</button>
+        <p class = "warning-message deactivate">No empty fields are allowed</p>
+        <div class="registration__new-account">
+        Already have an account?
+        <a href="#" class="sign-in">Sign In</a></div>
+    </form>
+
+    <div class="account deactivate">
+        <div class="account-header">
+            <div class="account-logo">
+                <img src="img/logo.svg" alt="logo">
+            </div>
+            <div class="account-greeting">Hello, <span class="account-name">Vlad</span> </div>
+            <div class="button-set">
+                <button class="delete-account">Delete Account</button>
+                <button class="account-logout">Logout</button>
+            </div>
+        </div>
+        <div class="account-descr">Account Information: <span class="account-info"></span></div>
+    </div>
+
+    <div class="warning-window deactivate">
+        <div class="delete-form">
+            <h2 class="delete-title">Are you sure want to delete your Account?</h2>
+            <div class="confirm-buttons">
+                <button class="yes-button">Yes</button>
+                <button class="no-button">No</button>
+            </div>
+        </div>
+    </div>
+
+
+
+<script src="js/script.js"></script>
+</body>
+</html>
