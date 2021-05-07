@@ -1,5 +1,7 @@
 'use strict'
-// login elements
+
+// SETTING VARIABLES
+// Login elements
 const loginForm = document.querySelector('.login-form'),
     loginInput = document.querySelector('.login-input'),
     pswLogin = document.querySelector('.psw-login'),
@@ -7,14 +9,14 @@ const loginForm = document.querySelector('.login-form'),
     wrongInputData = document.querySelector('.wrong-input-data'),
     singUpLink = document.querySelector('.sign-up');
 
-//acount elements
+// Acount elements
 const account = document.querySelector('.account'),
-    accountLogout = document.querySelector('.account-logout'),
+    accountLogoutBtn = document.querySelector('.account-logout'),
     accountName = document.querySelector('.account-name'),
     accountInfo = document.querySelector('.account-info'),
-    deleteAccount = document.querySelector('.delete-account') 
+    deleteAccountBtn = document.querySelector('.delete-account') 
 
-//registration elements
+// Registration elements
 const registrationForm = document.querySelector('.registration-form'),
     signInLink = document.querySelector('.sign-in'),
     registrationName = document.querySelector('.registration-name'),
@@ -22,10 +24,15 @@ const registrationForm = document.querySelector('.registration-form'),
     registrationPsw = document.querySelector('.registration-psw'),
     warningMessage = document.querySelector('.warning-message')
 
+// Warning window elemets
+const warningWindow = document.querySelector('.warning-window'),
+    warningYesButton = document.querySelector('.yes-button'),
+    warningNoButton = document.querySelector('.no-button')
 
-let userLogIn = JSON.parse(localStorage.getItem('activeUser'))
+//Enother variables
+let deleteLoggetUserIndex = ''
 
-
+// Date options
 const dateOptions = {
     year: 'numeric',
     month: 'long',
@@ -36,78 +43,92 @@ const dateOptions = {
     second: 'numeric'
 };
 
-let usersData = JSON.parse(localStorage.getItem('users'));
-if(usersData == null) usersData = [
-    {
-        userName: 'Dmytro',
-        userLastName: 'Gopko',
-        login: '1',
-        psw: '1',
-        date: 'registered before the project was creating! Like a BOSS',
-    } //Admin USER
-];
+// Download data users from local storage
+let loggetInUser = JSON.parse(localStorage.getItem('Logget in User'));  // logged in user
+let usersData = JSON.parse(localStorage.getItem('users'));  // all users
+console.log(usersData)
+if(usersData == null || usersData.length == 0) {
+    usersData = [
+    //Admin USER
+        {   
+            userName: 'Dmytro',
+            userLastName: 'Gopko',
+            login: '1',
+            psw: '1',
+            rank: 'admin',
+            date: 'registered before the project was creating! Like a BOSS',
+        } 
+    ];
+    localStorage.setItem('users', JSON.stringify(usersData))
+};
+console.log(usersData)
 
-const signInArea = function(){
+// FUNCTIONS 
+// styles Login area 
+const loginAreaStyles = function(){
     loginForm.classList.remove('deactivate');
     registrationForm.classList.add('deactivate');
     account.classList.add('deactivate');
-}
-
-
-const accountArea = function() {
-    loginForm.classList.add('deactivate');
-    account.classList.remove('deactivate');
-    accountName.textContent = userLogIn.userName;
-    accountInfo.textContent = 'Name: ' + userLogIn.userName + ', last name: ' + userLogIn.userLastName + ', Registration date: ' + userLogIn.date;
-}
-const userActive = function (){
-    if (userLogIn === null) {
-        userLogIn = {}
-    } else {
-        loginForm.classList.add('deactivate')
-        account.classList.remove('deactivate')
-        accountArea()
-    }
+    wrongInput.classList.add('deactivate');
+    wrongInputData.classList.add('deactivate');
 };
 
+// styles Registration area 
+const registrationAreaStyles = function() {
+    registrationForm.classList.remove('deactivate');
+    loginForm.classList.add('deactivate');
+    account.classList.add('deactivate');
+};
 
-const loginArea = function (){    
-    usersData.forEach(function(item, i){
+// styles Acount area 
+const accountAreaStyles = function() {
+    account.classList.remove('deactivate');
+    registrationForm.classList.add('deactivate');
+    loginForm.classList.add('deactivate');
+};
+
+// styles Empty inputs
+const emptyInputsStyles = function(){
+    wrongInputData.classList.remove('deactivate');
+    wrongInput.classList.add('deactivate');
+};
+
+// styles Wrong autorization data
+const wrongDataStyles = function() {
+    wrongInput.classList.remove('deactivate');
+    wrongInputData.classList.add('deactivate');
+}
+
+// for cleaning inputs 
+const cleaningInputs = function() {
+    registrationName.value = '';
+    registrationLogin.value = '';
+    registrationPsw.value = '';
+    loginInput.value = '';
+    pswLogin.value = '';
+}
+
+// for work with AUTHORIZATION
+const userAuthorization = function() {
+    usersData.forEach(function(item){
         if(loginInput.value === item.login && pswLogin.value === item.psw) {
-            userLogIn = item
-            localStorage.setItem('activeUser', JSON.stringify(userLogIn))
-            accountArea();
-            loginInput.value = ''
-            pswLogin.value = ''
+            loggetInUser = item
+            localStorage.setItem('Logget in User', JSON.stringify(loggetInUser))
+                //logged in username record to local storage
+            loggetUserArea();  
+            cleaningInputs();
 
         } else{
-            wrongInput.classList.remove('deactivate');
-            wrongInputData.classList.add('deactivate');
+            wrongDataStyles();
         }
     });
 };
 
-loginForm.addEventListener('submit', function(event){
-    event.preventDefault();
-    if(loginInput.value !== '' && pswLogin.value !== '') {
-        loginArea();
-    } else {
-        wrongInputData.classList.remove('deactivate');
-        wrongInput.classList.add('deactivate');
-    };
-});
-singUpLink.addEventListener('click',function(){
-    loginForm.classList.add('deactivate');
-    registrationForm.classList.remove('deactivate')
-})
-
-signInLink.addEventListener('click', signInArea);
-
-registrationForm.addEventListener('submit', function(event){
-    event.preventDefault();
+// for work with REGISTRATION
+const userRegistration = function(){
     const date = new Date(); 
     const nameOfUser = registrationName.value.split(' ')
-    const newUser = {
+    const newUser = {  // new user form
         userName: nameOfUser[0],
         userLastName: nameOfUser[1],
         login: registrationLogin.value,
@@ -115,21 +136,84 @@ registrationForm.addEventListener('submit', function(event){
         date: date.toLocaleDateString("ru", dateOptions),
     };
     // here create check if the user is registered
-    console.log(newUser) 
-    usersData.unshift(newUser);
-    localStorage.setItem('users', JSON.stringify(usersData))
+    usersData.unshift(newUser); // add new user in the head of array of users
+    localStorage.setItem('users', JSON.stringify(usersData)) // record new array with new user in local storage
     alert('Now you can sign in')
-    registrationForm.classList.add('deactivate');
-    loginForm.classList.remove('deactivate');
-    registrationName.value = '';
-    registrationLogin.value = '';
-    registrationPsw.value = '';
+    loginAreaStyles();
+    cleaningInputs();
+};
+
+// for Logget User Area
+const loggetUserArea = function() {
+    accountAreaStyles();
+    accountName.textContent = loggetInUser.userName;
+    accountInfo.textContent = 'Name: ' + loggetInUser.userName + ', last name: ' 
+    + loggetInUser.userLastName
+     + ', Registration date: '
+      + loggetInUser.date;
+};
+
+// for checkin Logget user on start
+const checkLoggetUser = function (){
+    if (loggetInUser === null) {
+        loggetInUser = {};
+    } else {
+        accountAreaStyles();
+        loggetUserArea();
+    }
+}; 
+
+// for LogOut from acount
+const logOut = function(){
+    localStorage.removeItem('Logget in User');
+    loginAreaStyles();
+};
+
+//for Delete Users
+const deleteUser = {
+    styleActWarning(){
+        warningWindow.classList.remove('deactivate');
+    },
+    styleDeactWorning(){
+        warningWindow.classList.add('deactivate');
+    },
+    deletingLoggetUser(){
+        if(loggetInUser.rank == 'admin'){ //cheking for ADMIN
+            deleteUser.styleDeactWorning();
+            alert('I am admin motherFucker !!!');
+        } else { //deleting logget user
+            deleteLoggetUserIndex = usersData.findIndex(function(item){ // search fo index of user
+                return item.login == loggetInUser.login
+            });
+            usersData.splice(deleteLoggetUserIndex, 1); // delete from aaray user with index
+            localStorage.setItem('users', JSON.stringify(usersData)); //recording new array with users
+            deleteUser.styleDeactWorning()
+            logOut();;
+        };
+    }
+};
+
+
+// LISTENERS OF BUTTONS
+loginForm.addEventListener('submit', function(event){
+    event.preventDefault();
+    if(loginInput.value !== '' && pswLogin.value !== '') {
+        userAuthorization();
+    } else {
+        emptyInputsStyles();
+    };
 });
 
-accountLogout.addEventListener('click', function(){
-    localStorage.removeItem('activeUser')
-    signInArea();
-})
+registrationForm.addEventListener('submit', function(event){
+    event.preventDefault();
+    userRegistration();
+});
 
+singUpLink.addEventListener('click', registrationAreaStyles);
+signInLink.addEventListener('click', loginAreaStyles);
+accountLogoutBtn.addEventListener('click', logOut);
+deleteAccountBtn.addEventListener('click', deleteUser.styleActWarning);
+warningYesButton.addEventListener('click', deleteUser.deletingLoggetUser);
+warningNoButton.addEventListener('click', deleteUser.styleDeactWorning) ;
 
-userActive();
+checkLoggetUser();
