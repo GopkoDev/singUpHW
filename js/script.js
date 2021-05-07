@@ -14,8 +14,8 @@ const account = document.querySelector('.account'),
     accountLogoutBtn = document.querySelector('.account-logout'),
     accountName = document.querySelector('.account-name'),
     accountInfo = document.querySelector('.account-info'),
-    deleteAccountBtn = document.querySelector('.delete-account') 
-
+    deleteAccountBtn = document.querySelector('.delete-account'), 
+    eachAccauntsDescr = document.querySelector('.account-descr')
 // Registration elements
 const registrationForm = document.querySelector('.registration-form'),
     signInLink = document.querySelector('.sign-in'),
@@ -46,7 +46,6 @@ const dateOptions = {
 // Download data users from local storage
 let loggetInUser = JSON.parse(localStorage.getItem('Logget in User'));  // logged in user
 let usersData = JSON.parse(localStorage.getItem('users'));  // all users
-console.log(usersData)
 if(usersData == null || usersData.length == 0) {
     usersData = [
     //Admin USER
@@ -61,8 +60,6 @@ if(usersData == null || usersData.length == 0) {
     ];
     localStorage.setItem('users', JSON.stringify(usersData))
 };
-console.log(usersData)
-
 // FUNCTIONS 
 // styles Login area 
 const loginAreaStyles = function(){
@@ -147,10 +144,8 @@ const userRegistration = function(){
 const loggetUserArea = function() {
     accountAreaStyles();
     accountName.textContent = loggetInUser.userName;
-    accountInfo.textContent = 'Name: ' + loggetInUser.userName + ', last name: ' 
-    + loggetInUser.userLastName
-     + ', Registration date: '
-      + loggetInUser.date;
+    
+    
 };
 
 // for checkin Logget user on start
@@ -188,11 +183,36 @@ const deleteUser = {
             usersData.splice(deleteLoggetUserIndex, 1); // delete from aaray user with index
             localStorage.setItem('users', JSON.stringify(usersData)); //recording new array with users
             deleteUser.styleDeactWorning()
-            logOut();;
+            logOut();
         };
     }
 };
 
+// for SHOW ALL USERS in account area and DELETE
+const showAllUsers = function (){
+    usersData.forEach(function(item){
+        const div = document.createElement('div');
+        div.classList.add('account-descr');
+        div.innerHTML = "Account Information: " + '<span class="account-info">'+'</span>' + 
+        '<button class="account_button-delete">' +
+        "Delete" +
+        '</button>';
+        const span = div.querySelector('.account-info');
+        const btn = div.querySelector('.account_button-delete')
+        span.textContent = 'Name: ' + item.userName + 
+        ', last name: ' + item.userLastName + 
+        ', Registration date: '+ item.date;
+        account.append(div);
+        btn.addEventListener('click', function(){
+            let index = usersData.findIndex(function(i){
+                return i.login == item.login
+            });
+            console.log(index)
+            usersData.splice(index, 1);
+            localStorage.setItem('users', JSON.stringify(usersData));
+        })
+    });
+};
 
 // LISTENERS OF BUTTONS
 loginForm.addEventListener('submit', function(event){
@@ -217,3 +237,4 @@ warningYesButton.addEventListener('click', deleteUser.deletingLoggetUser);
 warningNoButton.addEventListener('click', deleteUser.styleDeactWorning) ;
 
 checkLoggetUser();
+showAllUsers();
