@@ -127,7 +127,7 @@ const userAuthorization = function() {
 // for work with REGISTRATION
 const userRegistration = function(){
     const date = new Date(); 
-    const nameOfUser = registrationName.value.split(' ')
+    const nameOfUser = registrationName.value.split(' ');
     const newUser = {  // new user form
         userName: nameOfUser[0],
         userLastName: nameOfUser[1],
@@ -136,11 +136,20 @@ const userRegistration = function(){
         date: date.toLocaleDateString("ru", dateOptions),
     };
     // here create check if the user is registered
-    usersData.unshift(newUser); // add new user in the head of array of users
-    localStorage.setItem('users', JSON.stringify(usersData)) // record new array with new user in local storage
-    alert('Now you can sign in')
-    loginAreaStyles();
-    cleaningInputs();
+    const checkUserRegistration = usersData.findIndex(function(item){
+        return item.login == newUser.login
+    });
+    console.log(checkUserRegistration)
+    if (checkUserRegistration != -1) {
+        alert('this login is already in use')
+    } else {
+        usersData.unshift(newUser); // add new user in the head of array of users
+        localStorage.setItem('users', JSON.stringify(usersData)) // record new array with new user in local storage
+        alert('Now you can sign in')
+        loginAreaStyles();
+        cleaningInputs();
+    }
+    
 };
 
 // for Logget User Area
@@ -196,9 +205,9 @@ const showAllUsers = function (){
     accountDescrWrapper.innerHTML = ''
     usersData.forEach(function(item){
         const div = document.createElement('div');
-        console.log(div)
         div.classList.add('account-descr');
-        div.innerHTML = "Account Information: " + '<span class="account-info">'+'</span>' + 
+        div.innerHTML = "Account Information: " + 
+        '<span class="account-info">'+'</span>' + 
         '<button class="account_button-delete">' +
         "Delete" +
         '</button>';
@@ -212,7 +221,6 @@ const showAllUsers = function (){
             let index = usersData.findIndex(function(i){
                 return i.login == item.login
             });
-            console.log(item)
             if (item.rank === 'admin') {
                 alert("OH NO. You can't delete an ADMIN. He is GOD LIKE ) sory dude")
             } else {
