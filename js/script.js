@@ -15,7 +15,9 @@ const account = document.querySelector('.account'),
     accountName = document.querySelector('.account-name'),
     accountInfo = document.querySelector('.account-info'),
     deleteAccountBtn = document.querySelector('.delete-account'), 
-    eachAccauntsDescr = document.querySelector('.account-descr')
+    eachAccauntsDescr = document.querySelector('.account-descr'),
+    accountDescrWrapper = document.querySelector('.acount-descr_wrapper')
+
 // Registration elements
 const registrationForm = document.querySelector('.registration-form'),
     signInLink = document.querySelector('.sign-in'),
@@ -114,6 +116,7 @@ const userAuthorization = function() {
                 //logged in username record to local storage
             loggetUserArea();  
             cleaningInputs();
+            showAllUsers();
 
         } else{
             wrongDataStyles();
@@ -190,8 +193,10 @@ const deleteUser = {
 
 // for SHOW ALL USERS in account area and DELETE
 const showAllUsers = function (){
+    accountDescrWrapper.innerHTML = ''
     usersData.forEach(function(item){
         const div = document.createElement('div');
+        console.log(div)
         div.classList.add('account-descr');
         div.innerHTML = "Account Information: " + '<span class="account-info">'+'</span>' + 
         '<button class="account_button-delete">' +
@@ -202,14 +207,20 @@ const showAllUsers = function (){
         span.textContent = 'Name: ' + item.userName + 
         ', last name: ' + item.userLastName + 
         ', Registration date: '+ item.date;
-        account.append(div);
+        accountDescrWrapper.append(div);
         btn.addEventListener('click', function(){
             let index = usersData.findIndex(function(i){
                 return i.login == item.login
             });
-            console.log(index)
-            usersData.splice(index, 1);
-            localStorage.setItem('users', JSON.stringify(usersData));
+            console.log(item)
+            if (item.rank === 'admin') {
+                alert("OH NO. You can't delete an ADMIN. He is GOD LIKE ) sory dude")
+            } else {
+                usersData.splice(index, 1);
+                localStorage.setItem('users', JSON.stringify(usersData));
+                showAllUsers();
+            }
+            
         })
     });
 };
